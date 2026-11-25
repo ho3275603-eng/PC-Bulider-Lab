@@ -158,13 +158,13 @@
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
                     <button onclick="loadPresetBuild('budget_25k')" class="px-3 py-1.5 bg-white hover:bg-blue-50 text-blue-700 border border-slate-300 hover:border-blue-300 rounded-lg font-bold shadow-xs transition">
-                        💰 輕量文書裝機 ($25K)
+                        💰 輕量文書裝機 (約 $4 萬)
                     </button>
                     <button onclick="loadPresetBuild('gaming_50k')" class="px-3 py-1.5 bg-white hover:bg-purple-50 text-purple-700 border border-slate-300 hover:border-purple-300 rounded-lg font-bold shadow-xs transition">
-                        🎮 3A 主流電競單 ($50K)
+                        🎮 3A 主流電競單 (約 $5 萬)
                     </button>
                     <button onclick="loadPresetBuild('ai_80k')" class="px-3 py-1.5 bg-white hover:bg-emerald-50 text-emerald-700 border border-slate-300 hover:border-emerald-300 rounded-lg font-bold shadow-xs transition">
-                        🤖 旗艦 AI 工作站 ($80K)
+                        🤖 旗艦 AI 工作站 (約 $8 萬)
                     </button>
                 </div>
             </div>
@@ -415,7 +415,7 @@
                         <tr>
                             <td class="p-4 font-bold text-slate-900">4. 售後追蹤與保固</td>
                             <td class="p-4 text-slate-500">紙本估價單易遺失，壞掉時不知道保固期過期沒。</td>
-                            <td class="p-4 bg-blue-50/50 text-blue-900 font-medium"><strong>線上四階段訂單進度查詢 + 數位保固履歷</strong>：隨時憑訂單編號或信箱查詢裝機進度與零件保固。</td>
+                            <td class="p-4 bg-blue-50/50 text-blue-900 font-medium"><strong>線上五階段訂單進度查詢 + 數位保固履歷</strong>：隨時憑訂單編號或信箱查詢裝機進度與零件保固。</td>
                         </tr>
                         <tr>
                             <td class="p-4 font-bold text-slate-900">5. 「這台能玩什麼？」</td>
@@ -613,7 +613,7 @@
                             </div>
                             <div>
                                 <h3 class="text-lg font-bold text-slate-900">ABC 經營策略：庫存、採購與供貨管理</h3>
-                                <p class="text-xs text-slate-500">依 ABC 等級決定管控強度。點選下方 A / B / C 卡片並按「確認」，AI 會依即時庫存產生該類別的採購建議。</p>
+                                <p class="text-xs text-slate-500">依 ABC 等級決定管控強度。點選下方 A / B / C 卡片並按「確認」，AI 會依近 92 天銷量（日均銷量、可售天數、再訂購點）產生該類別的採購建議。</p>
                             </div>
                         </div>
 
@@ -637,7 +637,7 @@
                                 <i data-lucide="megaphone" class="w-6 h-6"></i>
                             </div>
                             <div>
-                                <h3 class="text-lg font-bold text-slate-900">行銷企劃方案：依 ABC 分類設計的促銷活動</h3>
+                                <h3 class="text-lg font-bold text-slate-900">行銷企劃方案：A＋B、A＋C 搭配折抵（折扣放在配套件與慢銷品）</h3>
                                 <p class="text-xs text-slate-500">以下活動已上線，顧客在前台購物車符合條件時自動套用；可按卡片下方按鈕放入示範購物車體驗。</p>
                             </div>
                         </div>
@@ -1370,37 +1370,45 @@
             B: 'bg-amber-100 text-amber-800 border-amber-200',
             C: 'bg-blue-100 text-blue-700 border-blue-200'
         };
-        // ---------- 實際行銷活動（指定「哪個商品配哪個商品」，購物車自動折抵）----------
+        // ---------- 實際行銷活動 v2.1（指定「哪個商品配哪個商品」，購物車自動折抵）----------
+        // 設計原則：折扣放在「慢銷品」或「配套件」，不放在最熱銷的明星商品上；不做 C＋C（兩個都賣不動）
+        //   tier A：A 前段 × 後段配套（折在後段）　tier B：B 掛在 A 的訂單上（A＋B）　tier C：A＋C 清庫存與贈品
         // type 'set'  ：items 全部放進購物車，每一套折 off 元
         // type 'addon'：購買 masters 任一款，加購 target 時，target 每件折 off 元
         // type 'gift' ：折扣後滿 threshold 元，贈送 gift 一件（庫存不足則不送）
-        // tier 僅用於分類標示；商品的 ABC 等級仍由銷售資料即時計算
+        // 商品的 ABC 等級仍由銷售資料即時計算
         const CAMPAIGNS = [
-            // ── A 類主打：旗艦商品 × 關鍵搭配，拉高客單價 ──
-            { id: 'A1', tier: 'A', type: 'set', name: '4070 SUPER 電競雙核組', items: ['gpu-2', 'cpu-4'], off: 1500,
-              why: '3A 與電競最熱門的 GPU＋遊戲神 CPU，一次買齊省 $1,500。' },
-            { id: 'A2', tier: 'A', type: 'set', name: 'AMD 全紅旗艦組', items: ['gpu-5', 'mb-5'], off: 1000,
-              why: '7900 XTX 搭 X670E 主機板，AM5 平台高階玩家一次到位。' },
-            { id: 'A3', tier: 'A', type: 'set', name: '4K 旗艦供電組', items: ['gpu-3', 'psu-1'], off: 800,
-              why: '4080 SUPER 功耗高（TDP 320W），搭 850W 金牌全模組電源最安心。' },
-            { id: 'A4', tier: 'A', type: 'addon', name: '旗艦顯卡 × 靜音風扇搭售', masters: ['gpu-2', 'gpu-3', 'gpu-5'], target: 'acc-2', off: 100,
+            // ── 搭配①：A 前段 × 後段配套，折扣放在後段 ──
+            { id: 'R1', tier: 'A', type: 'set', name: '旗艦供電組', items: ['gpu-3', 'psu-1'], off: 400,
+              why: '4080 SUPER 功耗高（TDP 320W），搭 850W 金牌全模組電源最安心；折扣放在電源（後段配套件）。' },
+            { id: 'R2', tier: 'A', type: 'set', name: 'AM5 高階平台組', items: ['cpu-4', 'mb-5'], off: 500,
+              why: '7800X3D 搭 X670E 主機板，AM5 高階平台一次到位；折扣放在主機板。' },
+            { id: 'R3', tier: 'A', type: 'set', name: '14 代入門組', items: ['cpu-1', 'mb-1'], off: 300,
+              why: 'i5-14600K 搭 B760，同為 LGA1700 腳位，免擔心相容；折扣放在主機板。' },
+            // ── 搭配②：B 掛在 A 的訂單上（A＋B），B＋B 僅限同主題外觀組 ──
+            { id: 'R4', tier: 'B', type: 'set', name: '高階 CPU 水冷組', items: ['cpu-2', 'cooler-4'], off: 400,
+              why: 'i7-14700K 發熱高，搭 360 水冷最合適。' },
+            { id: 'R5', tier: 'B', type: 'set', name: '顯卡機殼組', items: ['gpu-2', 'case-4'], off: 300,
+              why: 'RTX 4070 SUPER 搭通風機殼，長度與風流都足夠。' },
+            { id: 'R6', tier: 'B', type: 'set', name: 'AM5 記憶體升級組', items: ['cpu-4', 'ram-4'], off: 300,
+              why: '7800X3D 搭 DDR5-6400 32GB（支援 EXPO），AM5 平台最佳記憶體。' },
+            { id: 'R7', tier: 'B', type: 'set', name: '水冷玻璃海景組', items: ['cooler-3', 'case-2'], off: 400,
+              why: '240 水冷搭三面玻璃海景房機殼，外觀與散熱兼顧（B＋B 外觀主題組）。' },
+            // ── 搭配③：A＋C 清庫存（借 A 的流量把 C 帶出去，折扣放在 C 品項）；不做 C＋C ──
+            { id: 'R8', tier: 'C', type: 'set', name: '旗艦顯卡＋850W 電源', items: ['gpu-3', 'psu-4'], off: 300,
+              why: '4080 SUPER 搭 850W PCIe 5.0 電源，供電足夠；折扣放在電源。' },
+            { id: 'R9', tier: 'C', type: 'set', name: '顯卡＋通風機殼', items: ['gpu-2', 'case-1'], off: 200,
+              why: 'RTX 4070 SUPER（267mm）放得進 Montech AIR 1000（限長 340mm）。' },
+            { id: 'R10', tier: 'C', type: 'set', name: 'AM5 入門平台組', items: ['cpu-4', 'mb-4'], off: 200,
+              why: '7800X3D 搭 B650M 主機板，同為 AM5 腳位。' },
+            { id: 'R11', tier: 'C', type: 'set', name: '高階 CPU＋雙塔散熱', items: ['cpu-5', 'cooler-2'], off: 150,
+              why: 'Ryzen 9 7900X 發熱高，搭 AK620 雙塔散熱器。' },
+            { id: 'R12', tier: 'C', type: 'set', name: 'B650 主機板＋入門 CPU', items: ['mb-2', 'cpu-3'], off: 250,
+              why: 'B650 AORUS 搭 Ryzen 5 7500F，同為 AM5，預算有限的主流遊戲組合。' },
+            { id: 'A4', tier: 'C', type: 'addon', name: '旗艦顯卡 × 靜音風扇搭售', masters: ['gpu-2', 'gpu-3', 'gpu-5'], target: 'acc-2', off: 100,
               why: '買旗艦顯卡加購機殼風扇，強化機殼風流，風扇每顆折 $100。' },
-            { id: 'A5', tier: 'A', type: 'addon', name: '高階 CPU × 導熱膏搭售', masters: ['cpu-4', 'cpu-2', 'cpu-5'], target: 'acc-1', off: 100,
+            { id: 'A5', tier: 'C', type: 'addon', name: '高階 CPU × 導熱膏搭售', masters: ['cpu-4', 'cpu-2', 'cpu-5'], target: 'acc-1', off: 100,
               why: '高階 CPU 換散熱器必備高效導熱膏，每條折 $100。' },
-            // ── B 類組合：穩定款互相搭配，促進成交 ──
-            { id: 'B1', tier: 'B', type: 'set', name: '14 代 Intel 入門組', items: ['cpu-1', 'mb-1'], off: 500,
-              why: 'i5-14600K 搭 B760，同為 LGA1700 腳位，一次買齊免擔心相容。' },
-            { id: 'B2', tier: 'B', type: 'set', name: 'AM5 DDR5 主流組', items: ['mb-2', 'ram-1'], off: 500,
-              why: 'B650 主機板搭 DDR5-6000 32GB（支援 EXPO），主流 AMD 平台最佳記憶體。' },
-            { id: 'B3', tier: 'B', type: 'set', name: '水冷玻璃海景組', items: ['cooler-3', 'case-2'], off: 400,
-              why: '240 水冷搭三面玻璃海景房機殼，外觀與散熱兼顧。' },
-            { id: 'B4', tier: 'B', type: 'set', name: 'AM5 高 CP 值入門組', items: ['cpu-3', 'mb-4'], off: 300,
-              why: 'Ryzen 5 7500F 搭 B650M 主機板，預算有限的主流遊戲首選。' },
-            // ── C 類消化：長尾商品當搭售與贈品，消化庫存 ──
-            { id: 'C1', tier: 'C', type: 'set', name: '入門機殼電源組', items: ['case-1', 'psu-3'], off: 300,
-              why: 'Montech 機殼搭 650W 金牌電源，組裝入門方案。' },
-            { id: 'C2', tier: 'C', type: 'set', name: '雙塔散熱強化組', items: ['cooler-2', 'acc-1'], off: 100,
-              why: 'AK620 雙塔散熱器附贈等級的導熱膏，安裝一次完成。' },
             { id: 'G1', tier: 'C', type: 'gift', name: '滿額贈 12cm 靜音風扇', threshold: 30000, gift: 'acc-2', demo: ['gpu-2', 'cpu-3', 'ram-1'],
               why: '消費滿 NT$ 30,000（折扣後）贈風扇一顆，消化 C 類庫存。' },
             { id: 'G2', tier: 'C', type: 'gift', name: '滿額再贈編織線', threshold: 50000, gift: 'acc-3', demo: ['gpu-3', 'cpu-2'],
@@ -1767,19 +1775,20 @@
             const { sorted, g, total } = abcSummary;
             const list = k => sorted.filter(p => p.abc === k);
             const chips = (arr, n = 5) => arr.slice(0, n).map(p => `<li>${escapeHtml(shortName(p.name, 28))} <span class="text-slate-400">（${(p.share * 100).toFixed(1)}%）</span></li>`).join('') || '<li class="text-slate-400">目前無商品</li>';
-            const cOver = list('C').filter(p => p.stock > ABC_CONFIG.C.target * 1.5);
+            const cOver = abcAnalyze('C').items.filter(i => i.status === 'over').map(i => i.p);
             const COLORS = { A: ['rose', 'flame', 'A 類：重點高營收'], B: ['amber', 'activity', 'B 類：穩定銷售款'], C: ['blue', 'package', 'C 類：長尾與配件'] };
             const badge = k => `<span class="bg-${COLORS[k][0]}-100 text-${COLORS[k][0]}-800 px-2 py-0.5 rounded text-[10px] font-bold whitespace-nowrap">${(g[k].rev / total * 100).toFixed(1)}% · ${g[k].n} 項</span>`;
 
             // ===== 經營策略（庫存／採購／供貨）=====
             const stockLine = k => {
                 const { items } = abcAnalyze(k);
-                const u = items.filter(i => i.status === 'urgent').length, r = items.filter(i => i.status === 'reorder').length;
+                const r = items.filter(i => i.status === 'reorder').length, o = items.filter(i => i.status === 'over').length;
                 return `<div class="flex flex-wrap gap-1.5">
-                    <span class="px-2 py-0.5 rounded bg-rose-100 text-rose-700 font-bold">緊急補貨 ${u} 項</span>
-                    <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">建議補貨 ${r} 項</span>
-                    <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-bold">充足 ${items.length - u - r} 項</span></div>`;
+                    <span class="px-2 py-0.5 rounded bg-rose-100 text-rose-700 font-bold">補貨 ${r} 項</span>
+                    <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">庫存偏高 ${o} 項</span>
+                    <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-bold">正常 ${items.length - r - o} 項</span></div>`;
             };
+            const campsOf = k => CAMPAIGNS.filter(c => (c.type === 'set' ? c.items : c.type === 'addon' ? [...c.masters, c.target] : [c.gift]).some(id => (prodById(id) || {}).abc === k));
             const stratCard = (k, bullets) => {
                 const [color, icon, title] = COLORS[k], c = ABC_CONFIG[k];
                 return `
@@ -1796,22 +1805,26 @@
                         <div class="font-bold text-slate-900 mb-1">目前庫存狀況</div>
                         ${stockLine(k)}
                     </div>
-                    <div class="text-slate-600"><b class="text-slate-900">對應行銷活動：</b>${CAMPAIGNS.filter(x => x.tier === k).map(x => `${x.id} ${escapeHtml(x.name)}`).join('、')}（詳見「行銷企劃」分頁）</div>
+                    <div class="text-slate-600"><b class="text-slate-900">相關行銷活動：</b>${campsOf(k).map(x => x.id).join('、') || '—'}（共 ${campsOf(k).length} 檔，詳見「行銷企劃」分頁）</div>
                     <div class="pt-2 border-t border-${color}-200/60">
                         <h5 class="font-bold text-slate-900 mb-1 text-xs">📦 經營策略</h5>
                         <ul class="list-disc list-inside text-slate-700 space-y-1.5">${bullets}</ul>
                     </div>
                 </div>`;
             };
+            const aList = list('A'), nmS = p => escapeHtml(shortName(p.name, 14));
+            const aFront = aList.slice(0, 4), aBack = aList.length > 4 ? aList.slice(Math.max(4, aList.length - 4)) : [];
+            const bOver = abcAnalyze('B').items.filter(i => i.status === 'over').length;
+            const cAvg = (() => { const it = abcAnalyze('C').items; const d = it.reduce((a, i) => a + i.d, 0); return d > 0 ? Math.round(it.reduce((a, i) => a + i.p.stock, 0) / d) : null; })();
             const aS = `
-                <li><b>VIP 供貨保障：</b>庫存 ≤ ${ABC_CONFIG.A.urgent} 件自動發緊急拉貨單，補到 ${ABC_CONFIG.A.target} 件，確保旗艦品不斷貨。</li>
-                <li><b>優先供貨協議：</b>與供應商簽署優先配貨，A 類庫存每日警示、每日巡檢。</li>`;
+                <li><b>前段不打折、不斷貨：</b>${aFront.map(nmS).join('、') || '—'}；每週盤點，服務水準 ${ABC_CONFIG.A.level}，依再訂購點補貨。</li>
+                <li><b>後段配套折扣：</b>${aBack.map(nmS).join('、') || '—'} 與前段成組，折扣放在後段。</li>`;
             const bS = `
-                <li><b>EOQ 雙週補貨：</b>庫存 ≤ ${ABC_CONFIG.B.reorder} 件進入補貨，補到 ${ABC_CONFIG.B.target} 件。</li>
-                <li><b>安全週轉存量：</b>維持 ${ABC_CONFIG.B.reorder}–${ABC_CONFIG.B.target} 件，採固定週期、定量訂購。</li>`;
+                <li><b>B 掛在 A 上：</b>不單獨促銷，搭配 A 類訂單成組（A＋B，見「行銷企劃」）。</li>
+                <li><b>雙週盤點：</b>服務水準 ${ABC_CONFIG.B.level}；可售超過 ${OVER_DAYS} 天者暫停採購（目前 ${bOver} 項）。</li>`;
             const cS = `
-                <li><b>季度批量採購：</b>庫存 ≤ ${ABC_CONFIG.C.reorder} 件才補貨，補到 ${ABC_CONFIG.C.target} 件，向代理商索取批量折扣。</li>
-                ${cOver.length ? `<li><b>庫存偏高暫停採購：</b>${cOver.slice(0, 4).map(p => escapeHtml(shortName(p.name, 16))).join('、')}，改由行銷企劃消化。</li>` : '<li class="text-slate-500">目前沒有庫存偏高的 C 類商品。</li>'}`;
+                <li><b>不做 C＋C：</b>C 類賣得慢，兩個 C 綁在一起仍賣不動；改與 A 搭售（A＋C）或當贈品。</li>
+                <li><b>每月盤點、停止單獨採購：</b>${cAvg !== null ? `目前平均約 ${fmt(cAvg)} 天才賣完，` : ''}${cOver.length ? `${cOver.length} 項庫存偏高（${cOver.slice(0, 3).map(p => escapeHtml(shortName(p.name, 14))).join('、')} 等）。` : '目前沒有庫存偏高的商品。'}</li>`;
             document.getElementById('abc-cards-grid').innerHTML = stratCard('A', aS) + stratCard('B', bS) + stratCard('C', cS);
 
             // ===== 行銷企劃（實際活動：哪個商品配哪個商品）=====
@@ -1854,9 +1867,10 @@
                     <button onclick="demoCampaign('${c.id}')" class="w-full py-1.5 rounded-lg border border-slate-300 bg-white hover:border-blue-500 hover:text-blue-600 font-bold text-[11px]">🛒 放入購物車體驗此活動</button>
                 </div>`;
             };
-            const GOAL = { A: '拉高客單價：旗艦商品搭關鍵配件，一次買齊更划算。', B: '促進成交：穩定款互相搭配，提高週轉。', C: '消化長尾庫存：用組合價與贈品帶動低營收商品。' };
+            const GOAL = { A: '前段商品不打折；折扣放在後段配套件（電源、主機板），促成成組購買。', B: 'B 掛在 A 的訂單上：高階 CPU＋水冷、顯卡＋機殼、CPU＋DDR5；B＋B 僅限同主題外觀組。', C: 'A＋C 清庫存：借 A 的流量把賣得慢的 C 帶出去，折扣放在 C 品項；不做 C＋C。' };
+            const MKT_COLORS = { A: ['rose', 'flame', '搭配①：A 前段 × 後段配套'], B: ['amber', 'activity', '搭配②：B 掛在 A 上（A＋B）'], C: ['blue', 'package', '搭配③：A＋C 清庫存與贈品'] };
             const mktCol = k => {
-                const [color, icon, title] = COLORS[k];
+                const [color, icon, title] = MKT_COLORS[k];
                 const list = CAMPAIGNS.filter(c => c.tier === k);
                 return `<div id="mkt-card-${k}" class="bg-${color}-50/50 border border-${color}-200 p-4 rounded-xl space-y-3">
                     <div class="flex items-center justify-between border-b border-${color}-200 pb-2 gap-2">
@@ -1870,7 +1884,7 @@
             document.getElementById('mkt-cards-grid').innerHTML = mktCol('A') + mktCol('B') + mktCol('C');
             const cnt = t => CAMPAIGNS.filter(c => c.type === t).length;
             document.getElementById('mkt-rules').innerHTML = [
-                ['組合優惠（指定 2 件商品）', `${cnt('set')} 檔，每套折 NT$ 100～1,500`, 'rose'],
+                ['組合優惠（指定 2 件商品）', `${cnt('set')} 檔，每套折 NT$ ${Math.min(...CAMPAIGNS.filter(c => c.type === 'set').map(c => c.off))}～${Math.max(...CAMPAIGNS.filter(c => c.type === 'set').map(c => c.off))}`, 'rose'],
                 ['搭售（買主商品、加購配件）', `${cnt('addon')} 檔，配件每件折 NT$ 100`, 'amber'],
                 ['滿額贈', `${cnt('gift')} 檔，滿 NT$ 30,000／50,000 贈配件`, 'blue']
             ].map(([t, d, c]) => `<div class="bg-${c}-50 border border-${c}-200 rounded-xl p-3"><div class="text-slate-500">活動類型</div><div class="font-bold text-${c}-800 text-sm">${t}</div><div class="text-slate-700">${d}</div></div>`).join('');
@@ -2351,7 +2365,7 @@
                     case: products.find(p => p.id === 'case-1'), // Montech AIR 1000
                     psu: products.find(p => p.id === 'psu-3')  // 650W
                 };
-                showToast('已成功帶入【輕量裝機菜單 ($25K)】！', 'success');
+                showToast('已成功帶入【輕量裝機菜單 (約 $4 萬)】！', 'success');
             } else if (presetKey === 'gaming_50k') {
                 selectedBuild = {
                     cpu: products.find(p => p.id === 'cpu-4'), // 7800X3D
@@ -2362,7 +2376,7 @@
                     case: products.find(p => p.id === 'case-1'), // Montech AIR 1000
                     psu: products.find(p => p.id === 'psu-2')  // Seasonic 750W
                 };
-                showToast('已成功帶入【主流 3A 電競神單 ($50K)】！', 'success');
+                showToast('已成功帶入【主流 3A 電競神單 (約 $5 萬)】！', 'success');
             } else if (presetKey === 'ai_80k') {
                 selectedBuild = {
                     cpu: products.find(p => p.id === 'cpu-2'), // i7-14700K
@@ -2373,7 +2387,7 @@
                     case: products.find(p => p.id === 'case-2'), // Lian Li O11
                     psu: products.find(p => p.id === 'psu-1')  // Corsair 850W
                 };
-                showToast('已成功帶入【旗艦 AI 工作站 ($80K)】！', 'success');
+                showToast('已成功帶入【旗艦 AI 工作站 (約 $8 萬)】！', 'success');
             }
             updateBuildUI();
             if (currentUIMode === 'matrix') renderMatrixStore();
@@ -3159,16 +3173,20 @@
         }
 
         // ===== ABC 互動式 AI 採購/推薦建議 =====
+        // 銷售速度模型參數（前置期 L、盤點週期 R 單位為天；z 為服務水準對應的安全係數）
+        const SALES_DAYS = 92;      // 模擬銷售資料涵蓋天數
+        const OVER_DAYS = 120;      // 可售天數超過此值視為庫存偏高
+        const SV_MARGIN = { gpu: 0.06, cpu: 0.07, mb: 0.10, ram: 0.12, psu: 0.15, cooler: 0.18, case: 0.18, acc: 0.40 };   // 各類別假設毛利率（用於推算進貨成本）
         const ABC_CONFIG = {
             A: { label: 'A 類：重點高營收（累積 0~80%）', share: '營收貢獻 80%', ring: ['ring-rose-400'], badge: 'bg-rose-100 text-rose-800',
-                 urgent: 3, reorder: 6, target: 10,
-                 policy: '當 A 類商品庫存降至 3 件以下時，AI 自動向原廠發送緊急拉貨單，並與供應商簽署「優先供貨協議」，確保旗艦品不斷貨。' },
+                 L: 7, R: 7, z: 1.96, level: '97.5%', cycle: '每週',
+                 policy: 'A 類服務水準最高（97.5%）、每週盤點：前段商品不打折、不斷貨；後段（電源、主機板、記憶體）為配套件，折扣放在後段。' },
             B: { label: 'B 類：穩定銷售（累積 80~95%）', share: '營收貢獻 15%', ring: ['ring-amber-400'], badge: 'bg-amber-100 text-amber-900',
-                 urgent: 6, reorder: 10, target: 15,
-                 policy: '採用 EOQ 經濟訂購量模型，設定雙週固定補貨，維持 10-15 件安全週轉存量。' },
+                 L: 7, R: 14, z: 1.65, level: '95%', cycle: '雙週',
+                 policy: 'B 類服務水準 95%、雙週盤點：不單獨促銷，掛在 A 類訂單上成組（A＋B）；可售超過 120 天者暫停採購。' },
             C: { label: 'C 類：長尾品項（累積 95~100%）', share: '營收貢獻 5%', ring: ['ring-blue-400'], badge: 'bg-blue-100 text-blue-800',
-                 urgent: 10, reorder: 15, target: 25,
-                 policy: '採季度大批量低頻採購，向代理商索取批量折扣；庫存積壓時暫停採購，並交由「行銷企劃」分頁的活動消化。' }
+                 L: 14, R: 30, z: 1.28, level: '90%', cycle: '每月',
+                 policy: 'C 類服務水準 90%、每月盤點：不再單獨採購、不做 C＋C（兩個賣不動的商品綁一起仍賣不動）；改以 A＋C 搭售與贈品消化庫存。' }
         };
         let abcSelected = null;
         let abcRunToken = 0;
@@ -3191,7 +3209,7 @@
             const modal = document.getElementById('abc-ai-modal');
             modal.classList.remove('hidden'); modal.classList.add('flex');
             document.getElementById('abc-ai-title').innerHTML = `<span class="mr-1.5">🤖</span> AI 分析：${ABC_CONFIG[k].label}`;
-            const steps = [`讀取 ${k} 類商品即時庫存資料…`, '計算安全庫存與補貨點…', '比對營收貢獻與週轉狀況…', '生成採購與推薦建議…'];
+            const steps = [`讀取 ${k} 類近 ${SALES_DAYS} 天銷量與庫存…`, '計算日均銷量與可售天數…', '依前置期與服務水準算再訂購點…', '生成採購與推薦建議…'];
             const body = document.getElementById('abc-ai-body');
             body.innerHTML = `<div id="abc-ai-steps" class="space-y-1.5 text-slate-500"></div>`;
             steps.forEach((txt, i) => {
@@ -3210,43 +3228,51 @@
             modal.classList.add('hidden'); modal.classList.remove('flex');
         }
 
+        // ----- 銷售速度模型：依近 92 天實際銷量計算日均銷量、可售天數、再訂購點與目標庫存 -----
+        function svItem(p, c) {
+            const d = (p.est ? 0 : (p.units || 0)) / SALES_DAYS;                       // 日均銷量
+            const mu = d * (c.L + c.R);
+            const S = Math.ceil(mu + c.z * Math.sqrt(mu));                              // 目標庫存
+            const rop = Math.ceil(d * c.L + c.z * Math.sqrt(d * c.L));                  // 再訂購點
+            const doc = d > 0 ? p.stock / d : Infinity;                                 // 可售天數
+            let status = 'ok', qty = 0;
+            if (p.est) status = 'new';
+            else if (p.stock <= rop) { status = 'reorder'; qty = Math.max(S - p.stock, 0); }
+            else if (doc > OVER_DAYS) status = 'over';
+            const unitCost = p.price * (1 - (SV_MARGIN[p.cat] !== undefined ? SV_MARGIN[p.cat] : 0.1));
+            return { p, d, doc, rop, S, status, qty, unitCost };
+        }
+
         function abcAnalyze(k) {
             const c = ABC_CONFIG[k];
-            const items = products.filter(p => p.abc === k).map(p => {
-                let status = 'ok';
-                if (p.stock <= c.urgent) status = 'urgent';
-                else if (p.stock <= c.reorder) status = 'reorder';
-                const qty = status === 'ok' ? 0 : c.target - p.stock;
-                return { p, status, qty, overstock: p.stock > c.target * 1.5 };
-            });
+            const items = products.filter(p => p.abc === k).map(p => svItem(p, c)).sort((a, b) => (a.p.rank || 99) - (b.p.rank || 99));
             return { c, items };
         }
 
         function renderAbcResult(k) {
             const { c, items } = abcAnalyze(k);
             const body = document.getElementById('abc-ai-body');
-            const urgent = items.filter(i => i.status === 'urgent');
-            const reorder = items.filter(i => i.status === 'reorder');
-            const over = items.filter(i => i.overstock);
-            const totalQty = items.reduce((a, i) => a + i.qty, 0);
-            const cost = Math.round(items.reduce((a, i) => a + i.qty * i.p.price * 0.8, 0));
-            const stockValue = items.reduce((a, i) => a + i.p.stock * i.p.price, 0);
-            const top = [...items].sort((a, b) => b.p.price * b.p.stock - a.p.price * a.p.stock)[0];
+            const need = items.filter(i => i.status === 'reorder');
+            const over = items.filter(i => i.status === 'over');
+            const totalQty = need.reduce((a, i) => a + i.qty, 0);
+            const cost = Math.round(need.reduce((a, i) => a + i.qty * i.unitCost, 0));
+            const sumD = items.reduce((a, i) => a + i.d, 0), sumStock = items.reduce((a, i) => a + i.p.stock, 0);
+            const avgDoc = sumD > 0 ? Math.round(sumStock / sumD) : null;
+            const top = [...items].sort((a, b) => (b.p.rev || 0) - (a.p.rev || 0))[0];
+            const docTxt = i => isFinite(i.doc) ? fmt(Math.round(i.doc)) : '—';
+            const badge = { reorder: '<span class="bg-rose-100 text-rose-700 font-bold px-2 py-0.5 rounded">補貨</span>',
+                            over: '<span class="bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">庫存偏高</span>',
+                            ok: '<span class="bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded">正常</span>',
+                            new: '<span class="bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded">新品・資料不足</span>' };
 
-            const badge = { urgent: '<span class="bg-rose-100 text-rose-700 font-bold px-2 py-0.5 rounded">緊急補貨</span>',
-                            reorder: '<span class="bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">建議補貨</span>',
-                            ok: '<span class="bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded">庫存充足</span>' };
-
-            let summary = `${k} 類目前共有 <b>${items.length}</b> 項商品，庫存總價值約 <b>NT$ ${stockValue.toLocaleString()}</b>。`;
-            if (urgent.length) summary += `其中 <b class="text-rose-600">${urgent.length} 項已低於緊急線 (≤${c.urgent} 件)</b>，建議立即處理。`;
-            else if (reorder.length) summary += `有 <b class="text-amber-700">${reorder.length} 項已接近補貨點</b>，可排入本期採購。`;
-            else summary += '各商品庫存都在健康水位，本期不需緊急採購。';
+            let summary = `${k} 類共 <b>${items.length}</b> 項商品` + (avgDoc !== null ? `，依近 ${SALES_DAYS} 天銷量推算，平均約 <b>${fmt(avgDoc)} 天</b>賣完（可售天數＝庫存 ÷ 日均銷量）。` : '。');
+            summary += need.length ? `有 <b class="text-rose-600">${need.length} 項已達再訂購點</b>需要補貨` : '目前沒有商品達到再訂購點，本期不需補貨';
+            summary += over.length ? `；另有 <b class="text-amber-700">${over.length} 項可售超過 ${OVER_DAYS} 天</b>，庫存偏高。` : '。';
 
             const recs = [];
-            if (urgent.length) recs.push(`🚨 優先補貨：${urgent.map(i => `<b>${i.p.name}</b> (補 ${i.qty} 件)`).join('、')}。`);
-            if (reorder.length) recs.push(`📦 排入定期採購：${reorder.map(i => `${i.p.name} (補 ${i.qty} 件)`).join('、')}。`);
-            if (over.length) recs.push(`🎁 庫存偏高：${over.map(i => i.p.name).join('、')}，建議暫停採購，並交由「行銷企劃」分頁的贈品／加購活動消化。`);
-            if (top) recs.push(`⭐ 重點管控：<b>${top.p.name}</b> (庫存價值最高)，建議列入每日庫存巡檢。`);
+            if (need.length) recs.push(`🚨 補貨：${need.map(i => `<b>${escapeHtml(i.p.name)}</b>（庫存 ${i.p.stock}、再訂購點 ${i.rop}，補 ${i.qty} 件）`).join('、')}。`);
+            if (over.length) recs.push(`🎁 庫存偏高：${over.slice(0, 6).map(i => `${escapeHtml(shortName(i.p.name, 16))}（約 ${docTxt(i)} 天）`).join('、')}${over.length > 6 ? ' 等' : ''}，停止採購，改由「行銷企劃」的搭配組合與贈品消化。`);
+            if (top && top.p.rev) recs.push(`⭐ 重點商品：<b>${escapeHtml(top.p.name)}</b>（營收占比 ${(top.p.share * 100).toFixed(1)}%），建議列入每週盤點。`);
             if (!items.length) recs.push('目前沒有歸類為此等級的商品，請先在商品管理中新增或調整分類。');
 
             body.innerHTML = `
@@ -3256,9 +3282,9 @@
                 </div>
                 <div class="overflow-x-auto border border-slate-200 rounded-xl">
                     <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-100 font-bold text-slate-700"><tr><th class="p-2.5">商品</th><th class="p-2.5">售價</th><th class="p-2.5">庫存</th><th class="p-2.5">AI 判斷</th><th class="p-2.5">建議補貨量</th></tr></thead>
+                        <thead class="bg-slate-100 font-bold text-slate-700"><tr><th class="p-2.5">商品</th><th class="p-2.5">日均銷量</th><th class="p-2.5">庫存</th><th class="p-2.5">可售天數</th><th class="p-2.5">再訂購點</th><th class="p-2.5">目標庫存</th><th class="p-2.5">AI 判斷</th><th class="p-2.5">建議補貨</th></tr></thead>
                         <tbody class="divide-y divide-slate-100">
-                            ${items.map(i => `<tr><td class="p-2.5 font-medium text-slate-900">${i.p.name}</td><td class="p-2.5">NT$ ${i.p.price.toLocaleString()}</td><td class="p-2.5 font-bold">${i.p.stock}</td><td class="p-2.5">${badge[i.status]}</td><td class="p-2.5 font-bold ${i.qty ? 'text-blue-600' : 'text-slate-400'}">${i.qty ? '+' + i.qty : '—'}</td></tr>`).join('') || '<tr><td colspan="5" class="p-4 text-center text-slate-400">無商品</td></tr>'}
+                            ${items.map(i => `<tr><td class="p-2.5 font-medium text-slate-900">${escapeHtml(i.p.name)}</td><td class="p-2.5">${i.d.toFixed(2)}</td><td class="p-2.5 font-bold">${i.p.stock}</td><td class="p-2.5">${docTxt(i)}</td><td class="p-2.5">${i.rop}</td><td class="p-2.5">${i.S}</td><td class="p-2.5">${badge[i.status]}</td><td class="p-2.5 font-bold ${i.qty ? 'text-blue-600' : 'text-slate-400'}">${i.qty ? '+' + i.qty : '—'}</td></tr>`).join('') || '<tr><td colspan="8" class="p-4 text-center text-slate-400">無商品</td></tr>'}
                         </tbody>
                     </table>
                 </div>
@@ -3266,7 +3292,8 @@
                     <div class="font-bold text-slate-900">🛒 AI 採購／推薦建議</div>
                     <ul class="list-disc list-inside space-y-1">${recs.map(r => `<li>${r}</li>`).join('')}</ul>
                     <div class="pt-2 text-slate-600"><b>策略原則：</b>${c.policy}</div>
-                    ${totalQty ? `<div class="text-slate-500 pt-1">預計補貨 ${totalQty} 件，採購成本約 NT$ ${cost.toLocaleString()} (以售價 8 折估算)。</div>` : ''}
+                    <div class="text-slate-500 pt-1">模型參數：前置期 ${c.L} 天、盤點${c.cycle}、服務水準 ${c.level}；再訂購點＝日均銷量×前置期＋z×√(日均銷量×前置期)。</div>
+                    ${totalQty ? `<div class="text-slate-500">預計補貨 ${totalQty} 件，進貨成本約 NT$ ${fmt(cost)}（依各類別假設毛利率推算，非實際進價）。</div>` : ''}
                 </div>
                 <div class="flex flex-wrap justify-end gap-2">
                     <button onclick="closeAbcModal()" class="px-4 py-2 rounded-lg font-bold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100">關閉</button>
@@ -3277,7 +3304,7 @@
         function applyAbcRestock(k) {
             const { items } = abcAnalyze(k);
             let n = 0;
-            items.forEach(i => { if (i.qty > 0) { i.p.stock += i.qty; n++; } });
+            items.forEach(i => { if (i.status === 'reorder' && i.qty > 0) { i.p.stock += i.qty; n++; } });
             showToast(`已依 AI 建議為 ${n} 項 ${k} 類商品補貨`, 'success');
             renderInventoryTable(); renderProductsTable();
             renderMatrixStore(); renderCardStore();
