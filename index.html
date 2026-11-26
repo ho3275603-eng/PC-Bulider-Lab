@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PC Builder Lab - 智慧組裝學堂與實體視覺化電商</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cg fill=%22%230FA89A%22%3E%3Crect x=%2219%22 y=%223%22 width=%224%22 height=%229%22 rx=%222%22/%3E%3Crect x=%2230%22 y=%223%22 width=%224%22 height=%229%22 rx=%222%22/%3E%3Crect x=%2241%22 y=%223%22 width=%224%22 height=%229%22 rx=%222%22/%3E%3Crect x=%2219%22 y=%2252%22 width=%224%22 height=%229%22 rx=%222%22/%3E%3Crect x=%2230%22 y=%2252%22 width=%224%22 height=%229%22 rx=%222%22/%3E%3Crect x=%2241%22 y=%2252%22 width=%224%22 height=%229%22 rx=%222%22/%3E%3Crect x=%223%22 y=%2219%22 width=%229%22 height=%224%22 rx=%222%22/%3E%3Crect x=%223%22 y=%2230%22 width=%229%22 height=%224%22 rx=%222%22/%3E%3Crect x=%223%22 y=%2241%22 width=%229%22 height=%224%22 rx=%222%22/%3E%3Crect x=%2252%22 y=%2219%22 width=%229%22 height=%224%22 rx=%222%22/%3E%3Crect x=%2252%22 y=%2230%22 width=%229%22 height=%224%22 rx=%222%22/%3E%3Crect x=%2252%22 y=%2241%22 width=%229%22 height=%224%22 rx=%222%22/%3E%3C/g%3E%3Crect x=%229%22 y=%229%22 width=%2246%22 height=%2246%22 rx=%2211%22 fill=%22%230B1B2E%22/%3E%3Cpath d=%22M24 44V21h10.5a7.5 7.5 0 0 1 0 15H24%22 fill=%22none%22 stroke=%22%230FA89A%22 stroke-width=%225.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Ccircle cx=%2244%22 cy=%2244%22 r=%225.5%22 fill=%22%23F59E0B%22/%3E%3Cpath d=%22M41.3 44.2l2 2 3.6-3.9%22 fill=%22none%22 stroke=%22%230B1B2E%22 stroke-width=%221.8%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js CDN -->
@@ -39,6 +40,22 @@
 </head>
 <body class="min-h-screen flex flex-col custom-scrollbar">
 
+    <!-- 品牌 Logo（深藍 #0B1B2E／青綠 #0FA89A／琥珀 #F59E0B）：晶片外型 ＋ P 字 ＋ 相容通過勾勾 -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <symbol id="pcbl-logo" viewBox="0 0 64 64">
+<g fill="#0FA89A">
+  <rect x="19" y="3" width="4" height="9" rx="2"/><rect x="30" y="3" width="4" height="9" rx="2"/><rect x="41" y="3" width="4" height="9" rx="2"/>
+  <rect x="19" y="52" width="4" height="9" rx="2"/><rect x="30" y="52" width="4" height="9" rx="2"/><rect x="41" y="52" width="4" height="9" rx="2"/>
+  <rect x="3" y="19" width="9" height="4" rx="2"/><rect x="3" y="30" width="9" height="4" rx="2"/><rect x="3" y="41" width="9" height="4" rx="2"/>
+  <rect x="52" y="19" width="9" height="4" rx="2"/><rect x="52" y="30" width="9" height="4" rx="2"/><rect x="52" y="41" width="9" height="4" rx="2"/>
+</g>
+<rect x="9" y="9" width="46" height="46" rx="11" fill="#0B1B2E"/>
+<path d="M24 44V21h10.5a7.5 7.5 0 0 1 0 15H24" fill="none" stroke="#0FA89A" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="44" cy="44" r="5.5" fill="#F59E0B"/>
+<path d="M41.3 44.2l2 2 3.6-3.9" fill="none" stroke="#0B1B2E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </symbol>
+    </svg>
+
     <!-- 頂部通知 Toast 視窗 -->
     <div id="toast-container" class="fixed top-20 right-4 z-[9999] space-y-2 pointer-events-none"></div>
 
@@ -46,12 +63,10 @@
     <header class="bg-white/90 backdrop-blur border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3 cursor-pointer shrink-0" onclick="switchView('store')">
-                <div class="bg-gradient-to-tr from-blue-600 to-indigo-600 p-2 rounded-xl text-white font-bold text-xl shadow-md shadow-blue-500/20">
-                    <i data-lucide="cpu" class="w-6 h-6 inline-block"></i>
-                </div>
+                <svg class="w-10 h-10 shrink-0" viewBox="0 0 64 64" role="img" aria-label="PC Builder Lab Logo"><use href="#pcbl-logo"/></svg>
                 <div>
-                    <h1 class="text-xl font-black bg-gradient-to-r from-blue-700 via-indigo-600 to-purple-700 bg-clip-text text-transparent">PC Builder Lab</h1>
-                    <p class="text-[11px] text-slate-500 font-semibold whitespace-nowrap hidden sm:block">智慧組裝學堂與實體模擬電商</p>
+                    <h1 class="text-xl font-black tracking-tight leading-tight"><span style="color:#0B1B2E">PC Builder</span> <span style="color:#0FA89A">Lab</span></h1>
+                    <p class="text-[11px] text-slate-500 font-semibold whitespace-nowrap hidden sm:block">智慧組裝學堂與實體視覺化電商</p>
                 </div>
             </div>
 
@@ -1063,7 +1078,7 @@
         <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto custom-scrollbar">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
-                    <i data-lucide="user-circle" class="w-5 h-5 text-purple-600"></i>
+                    <svg class="w-7 h-7 shrink-0" viewBox="0 0 64 64" aria-hidden="true"><use href="#pcbl-logo"/></svg>
                     <span>會員中心入口</span>
                 </h3>
                 <button onclick="closeLoginModal()" class="text-slate-400 hover:text-slate-700">
